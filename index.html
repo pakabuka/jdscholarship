@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T35 Law School Merit Scholarship Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Spectral', serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            width: 100%;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #003366;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #003366;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #003366;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #001f4d;
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #003366;
+            display: none;
+        }
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+        .explanation,
+        .color-explanation,
+        {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+        .color-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+        .green { background-color: green; }
+        .light-green { background-color: lightgreen; }
+        .yellow { background-color: yellow; }
+        .orange { background-color: orange; }
+        .red { background-color: red; }
+        .darkred { background-color: darkred; }
+        a {
+            color: #003366;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            cursor: pointer;
+            background-color: #f2f2f2;
+            color: #003366;
+        }
+        th:hover {
+            background-color: #ddd;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 850px;
+            background-color: #555;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%; /* Position above the icon */
+            left: 50%;
+            margin-left: -320px; /* Center the tooltip */
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0 10px;
+        }
+        .tooltip h3 {
+            margin-top: 0;
+        }
+
+        @media (min-width: 600px) {
+            .container {
+                max-width: 600px;
+                padding: 30px;
+            }
+            h1 {
+                font-size: 32px;
+            }
+            input[type="text"],
+            input[type="number"],
+            select {
+                width: calc(100% - 20px);
+                font-size: 16px;
+            }
+            button {
+                font-size: 18px;
+            }
+            .result {
+                font-size: 20px;
+            }
+            .explanation {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>T35 Law School Merit Scholarship Predictor</h1>
+        <form id="scholarship-form">
+            <div class="form-group">
+                <label for="lsat">LSAT Score:</label>
+                <input type="number" id="lsat" name="lsat" min="120" max="180" required>
+            </div>
+            <div class="form-group">
+                <label for="gpa">GPA:</label>
+                <input type="number" step="0.01" id="gpa" name="gpa" min="0" max="4.33" required>
+            </div>
+            <div class="form-group">
+                <label for="urm">URM Status:</label>
+                <select id="urm" name="urm" required>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                </select>
+            </div>
+            <button type="submit">Predict Scholarship</button>
+        </form>
+    </div>
+    
+    <div class="result" id="result">
+        <div class="container">
+            <h4>Predicted Merit Scholarship Results<h5><i>3 Years Total</i></h5></h4>
+            
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>School Name</th>
+                        <th>Scholarship</th>
+                        <th>RMSE</th>
+                        <th>AUC (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Results will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="explanation container">
+        <h3>Explanation of Model Performance Metrics</h3>
+        <p><b>RMSE (Root Mean Square Error):</b> This metric measures the average magnitude of the error. For example, an RMSE of 30000 means that, on average, the predicted scholarship amounts are off by $30,000. Lower RMSE values indicate better fit.</p>
+        <p><b>AUC (Area Under the Curve):</b> The AUC measures the ability of the model to distinguish between different classes (e.g., high scholarship vs. low scholarship). An AUC of 0.5 indicates no discriminative power, while an AUC of 1.0 indicates perfect classification.</p>
+        <p>Interpreting AUC:</p>
+        <ul>
+            <li>0.5 &lt; AUC &lt; 0.7: Poor model performance</li>
+            <li>0.7 ≤ AUC &lt; 0.8: Fair performance</li>
+            <li>0.8 ≤ AUC &lt; 0.9: Good performance</li>
+            <li>0.9 ≤ AUC &lt; 1.0: Excellent performance</li>
+        </ul>
+    </div>
+
+    <div class="color-explanation container">
+        <h3>Scholarship Amount Ranges</h3>
+        <p><span class="color-box green"></span> >= $200,000</p>
+        <p><span class="color-box light-green"></span> $100,000 - $199,999</p>
+        <p><span class="color-box yellow"></span> $50,000 - $99,999</p>
+        <p><span class="color-box orange"></span> Less than $50,000</p>
+         <p><span class="color-box red"></span>Likely No Scholarship</p>
+<!--        <p><span class="color-box red"></span>$10,000 - $49,999</p>-->
+<!--        <p><span class="color-box darkred"></span> Less than $9,999</p>-->
+    </div>
+    
+<!--    <div class="disclaimer container">-->
+     <div class="disclaimer">
+         
+        <i>Disclaimer: This website is for reference usage only. <br> The scholarship predictions provided are <br> based on historical data and statistical models. <br> Actual scholarship awards may vary and are subject to <br> the discretion of individual institutions.</i>
+         <br>
+         <br>
+         
+        Yale, Stanford, and Harvard do not provide merit-based scholarship. <br>
+        Data source: <a href="https://www.lsd.law/download" target="_blank">https://www.lsd.law/download</a>. <br> Models were built based on data from the 2013-2023 cycles. <br> 
+         Developed by Frederick Liu. Last updated: 6/19/2024.
+         
+    </div>
+
+    <script>
+        const schools = {
+            'Chicago': {rmse: 227702.6, auc: 0.6236, coefficients: {lsat: -94451.86, gpa: -4502406, urm: 100508.3, interaction: 27472.67, constant: 15409743}},
+            'Columbia': {rmse: 282973.1, auc: 0.6362, coefficients: {lsat: -87211.6, gpa: -3944020, urm: 34507.51, interaction: 23411.62, constant: 14769456}},
+            'Penn': {rmse: 81434.87, auc: 0.6515, coefficients: {lsat: -47058.02, gpa: -2270187, urm: 30869.82, interaction: 13229.59, constant: 8171473}},
+            'NYU': {rmse: 52754.2, auc: 0.7396, coefficients: {lsat: -11986.01, gpa: -669460.2, urm: 52667.03, interaction: 4559.575, constant: 1683398}},
+            'Duke': {rmse: 25924.4, auc: 0.6748, coefficients: {lsat: -30368.98, gpa: -1447209, urm: 30982.83, interaction: 8828.305, constant: 5055586}},
+            'Berkeley': {rmse: 50733.26, auc: 0.6089, coefficients: {lsat: -20378.5, gpa: -990927.7, urm: 19950.73, interaction: 5773.254, constant: 3572654}},
+            'Virginia': {rmse: 46742.17, auc: 0.7413, coefficients: {lsat: -43239.77, gpa: -2137462, urm: 62552.15, interaction: 13197.19, constant: 7038853}},
+            'Michigan': {rmse: 37210.09, auc: 0.8382, coefficients: {lsat: -35003.85, gpa: -1814628, urm: 26192.12, interaction: 11157.79, constant: 5743213}},
+            'Northwestern': {rmse: 56518.56, auc: 0.7655, coefficients: {lsat: -26511.06, gpa: -1223315, urm: 57389.35, interaction: 7762.117, constant: 4231851}},
+            'Cornell': {rmse: 35408.51, auc: 0.8219, coefficients: {lsat: -28081.49, gpa: -1234262, urm: 2663.893, interaction: 7879.609, constant: 4474826}},
+            'Georgetown': {rmse: 41129.34, auc: 0.6664, coefficients: {lsat: -10180.37, gpa: -579899.4, urm: 32369.01, interaction: 3656.777, constant: 1674257}},
+            'UCLA': {rmse: 40762.56, auc: 0.7468, coefficients: {lsat: -22235.69, gpa: -1210054, urm: 47688.04, interaction: 7442.941, constant: 3644002}},
+            'Vanderbilt': {rmse: 32917.12, auc: 0.8163, coefficients: {lsat: -15191.78, gpa: -807333.5, urm: 8450.481, interaction: 5199.541, constant: 2403619}},
+            'Washington St. Louis': {rmse: 34283.04, auc: 0.7797, coefficients: {lsat: -29170.75, gpa: -1473692, urm: 41784.94, interaction: 8872.555, constant: 4979052}},
+            'UT Austin': {rmse: 29032.87, auc: 0.6857, coefficients: {lsat: -28422.6, gpa: -1335594, urm: -20009.34, interaction: 7959.918, constant: 4849592}},
+            'Georgia': {rmse: 29517.02, auc: 0.6970, coefficients: {lsat: -4951.85, gpa: -334893.7, urm: -9710.031, interaction: 2128.955, constant: 822891.2}},
+            'Notre Dame': {rmse: 41366.51, auc: 0.8238, coefficients: {lsat: -37147.51, gpa: -1869728, urm: 40092.07, interaction: 11368.97, constant: 6194232}},
+            'USC': {rmse: 20032.15, auc: 0.8409, coefficients: {lsat: -28141.27, gpa: -1364363, urm: 16457.21, interaction: 8463.678, constant: 4640164}},
+            'Illinois Urbana': {rmse: 37827.55, auc: 0.6825, coefficients: {lsat: -4591.299, gpa: -420451.4, urm: 3960.17, interaction: 2656.365, constant: 794776.7}},
+            'UNC': {rmse: 10296.7, auc: 0.8134, coefficients: {lsat: -3269.181, gpa: -200192.4, urm: 1865.53, interaction: 1322.687, constant: 519085.7}},
+            'Wake Forest': {rmse: 31472.64, auc: 0.7894, coefficients: {lsat: -3789.637, gpa: -392629, urm: 17175.02, interaction: 2604.394, constant: 595610.8}},
+            'Minnesota': {rmse: 32870.64, auc: 0.7652, coefficients: {lsat: -18934.47, gpa: -1105377, urm: 50882.31, interaction: 6797.552, constant: 3144905}},
+            'Ohio State': {rmse: 44275.24, auc: 0.7059, coefficients: {lsat: -11816.03, gpa: -674061.9, urm: 19886.37, interaction: 4182.913, constant: 1980447}},
+            'Florida Levin': {rmse: 28180.93, auc: 0.5292, coefficients: {lsat: -20071.65, gpa: -1039147, urm: -5400.61, interaction: 6155.847, constant: 3474412}},
+            'Boston College': {rmse: 26187.31, auc: 0.7787, coefficients: {lsat: -10477.16, gpa: -606746.1, urm: 1673.477, interaction: 3892.16, constant: 1676023}},
+            'Washington & Lee': {rmse: 19355.2, auc: 0.8385, coefficients: {lsat: -15073.41, gpa: -824056.8, urm: 6391.264, interaction: 5065.079, constant: 2545325}},
+            'Emory': {rmse: 22841.9, auc: 0.8497, coefficients: {lsat: -5093.711, gpa: -400583.9, urm: 9654.837, interaction: 2594.931, constant: 848387.6}},
+            'Iowa': {rmse: 43974.23, auc: 0.7836, coefficients: {lsat: -5261.88, gpa: -326277.1, urm: 44143.16, interaction: 2378.069, constant: 691331.9}},
+            'Boston University': {rmse: 46806.7, auc: 0.6678, coefficients: {lsat: -40119.52, gpa: -1942752, urm: 40522.76, interaction: 11934.16, constant: 6599485}},
+            'Villanova': {rmse: 20649.36, auc: 0.6795, coefficients: {lsat: -8219.16, gpa: -539499.1, urm: 14292.96, interaction: 3442.036, constant: 1366156}},
+            'Utah': {rmse: 24021.39, auc: 0.75, coefficients: {lsat: -24032.53, gpa: -1163827, urm: -15951.21, interaction: 7463.081, constant: 3802753}},
+            'William & Mary': {rmse: 32710.99, auc: 0.5508, coefficients: {lsat: 12443.92, gpa: 355218.5, urm: 3847.6, interaction: -2117.897, constant: -1992490}},
+        };
+
+        document.getElementById('scholarship-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const lsat = parseFloat(document.getElementById('lsat').value);
+    const gpa = parseFloat(document.getElementById('gpa').value);
+    const urm = parseInt(document.getElementById('urm').value);
+    let resultsHTML = '';
+    const coefficients = {
+    'Chicago': {lsat: -0.940, gpa: -48.264, urm: 3.013, interaction: 0.331, constant: 128.021},
+    'Columbia': {lsat: -0.784, gpa: -44.716, urm: 2.125, interaction: 0.295, constant: 111.566},
+    'Penn': {lsat: 0.652, gpa: 21.500, urm: 1.658, interaction: -0.093, constant: -134.058},
+    'NYU': {lsat: -0.921, gpa: -52.547, urm: 2.200, interaction: 0.347, constant: 131.158},
+    'Duke': {lsat: -1.385, gpa: -73.208, urm: 1.647, interaction: 0.467, constant: 212.961},
+    'Berkeley': {lsat: -0.400, gpa: -21.123, urm: 1.390, interaction: 0.149, constant: 50.742},
+    'Virginia': {lsat: 0.534, gpa: 15.770, urm: 1.465, interaction: -0.068, constant: -106.988},
+    'Michigan': {lsat: 0.413, gpa: 10.948, urm: 1.175, interaction: -0.048, constant: -81.285},
+    'Northwestern': {lsat: 0.417, gpa: 8.622, urm: 1.649, interaction: -0.026, constant: -86.502},
+    'Cornell': {lsat: -0.754, gpa: -38.037, urm: 1.654, interaction: 0.263, constant: 102.614},
+    'Georgetown': {lsat: -0.155, gpa: -19.818, urm: 2.027, interaction: 0.144, constant: 9.147},
+    'UCLA': {lsat: 1.270, gpa: 42.918, urm: 1.257, interaction: -0.228, constant: -230.739},
+    'Vanderbilt': {lsat: -0.126, gpa: -16.520, urm: 1.929, interaction: 0.132, constant: 1.602},
+    'Washington St. Louis': {lsat: 2.163, gpa: 86.927, urm: 1.398, interaction: -0.502, constant: -372.185},
+    'UT Austin': {lsat: 0.212, gpa: -7.272, urm: 0.408, interaction: 0.063, constant: -47.925},
+    'Georgia': {lsat: -0.414, gpa: -38.800, urm: -0.255, interaction: 0.240, constant: 66.192},
+    'Notre Dame': {lsat: -0.060, gpa: -13.516, urm: 1.458, interaction: 0.101, constant: -1.046},
+    'USC': {lsat: -0.499, gpa: -27.428, urm: 1.151, interaction: 0.196, constant: 63.186},
+    'Illinois Urbana': {lsat: 0.335, gpa: 5.738, urm: 1.615, interaction: -0.019, constant: -62.716},
+    'UNC': {lsat: -0.365, gpa: -22.651, urm: 1.148, interaction: 0.154, constant: 50.486},
+    'Wake Forest': {lsat: 0.025, gpa: -6.927, urm: 0.919, interaction: 0.057, constant: -11.574},
+    'Minnesota': {lsat: 0.278, gpa: 0.700, urm: 2.221, interaction: 0.023, constant: -60.267},
+    'Ohio State': {lsat: -0.048, gpa: -15.036, urm: 2.320, interaction: 0.119, constant: -6.476},
+    'Florida Levin': {lsat: 0.138, gpa: -6.945, urm: -0.007, interaction: 0.051, constant: -27.397},
+    'Boston College': {lsat: -0.356, gpa: -28.408, urm: 0.651, interaction: 0.193, constant: 46.930},
+    'Washington & Lee': {lsat: 1.668, gpa: 62.807, urm: 1.169, interaction: -0.366, constant: -281.607},
+    'Emory': {lsat: 1.085, gpa: 35.973, urm: 0.919, interaction: -0.197, constant: -189.474},
+    'Iowa': {lsat: -0.835, gpa: -47.481, urm: 2.008, interaction: 0.316, constant: 122.426},
+    'Boston University': {lsat: 0.780, gpa: 24.917, urm: 1.638, interaction: -0.118, constant: -148.010},
+    'Villanova': {lsat: 0.496, gpa: 13.010, urm: 2.099, interaction: -0.057, constant: -92.839},
+    'Utah': {lsat: 0.040, gpa: -6.608, urm: 0.488, interaction: 0.077, constant: -27.031},
+    'William & Mary': {lsat: 0.846, gpa: 28.375, urm: 0.666, interaction: -0.153, constant: -149.260}
+};
+
+
+    for (const school in coefficients) {
+        const beta = coefficients[school];
+
+        // Calculate the logit
+        const logit = beta.constant + beta.lsat * lsat + beta.gpa * gpa + beta.urm * urm + beta.interaction * lsat * gpa;
+        
+        // Calculate the admission probability
+        const probability = 1 / (1 + Math.exp(-logit));
+
+        if (probability > 0.7) {
+            // Calculate the scholarship amount
+            const scholarship = schools[school].coefficients.lsat * lsat + schools[school].coefficients.gpa * gpa + schools[school].coefficients.urm * urm + schools[school].coefficients.interaction * lsat * gpa + schools[school].coefficients.constant;
+            let scholarshipCategory = '';
+            let colorClass = '';
+
+            if (scholarship > 200000) {
+                scholarshipCategory = '>= $200,000';
+                colorClass = 'green';
+            } else if (scholarship >= 100000) {
+                scholarshipCategory = '$100,000 - $199,999';
+                colorClass = 'light-green';
+            } else if (scholarship >= 50000) {
+                scholarshipCategory = '$50,000 - $99,999';
+                colorClass = 'yellow';
+            } else if (scholarship >= 0 && scholarship < 50000) {
+                scholarshipCategory = 'Less than $50,000';
+                colorClass = 'orange';
+            } else {
+                scholarshipCategory = 'Likely No Scholarship';
+                colorClass = 'red';
+            }
+
+            resultsHTML += `
+                <tr class="${colorClass}">
+                    <td>${school}</td>
+                    <td>${scholarshipCategory}</td>
+                    <td>${Math.round(schools[school].rmse)}</td>
+                    <td>${(schools[school].auc * 100).toFixed(0)}%</td>
+                </tr>
+            `;
+        } else {
+            // No Scholarship
+            resultsHTML += `
+                <tr class="red">
+                    <td>${school}</td>
+                    <td>Likely No Scholarship</td>
+                    <td>${Math.round(schools[school].rmse)}</td>
+                    <td>${(schools[school].auc * 100).toFixed(0)}%</td>
+                </tr>
+            `;
+        }
+    }
+    document.querySelector('#results-table tbody').innerHTML = resultsHTML;
+    document.querySelector('.result').style.display = 'block';
+});
+
+    </script>
+</body>
+</html>
